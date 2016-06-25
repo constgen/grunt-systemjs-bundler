@@ -1,0 +1,24 @@
+{
+	"name": "gunt-systemjs-bundler",
+	"main": "systemjs.plugin.js",
+	"version": "0.1.0",
+	"private": false,
+	"license": "MIT",
+	"keywords": [
+		"gruntplugin"
+	],
+	"author": {
+		"name": "Constantine Genchevsky",
+		"email" : "const.gen@gmail.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/constgen/gunt-systemjs-bundler.git"
+	},
+	"dependencies": {
+		"systemjs-builder": "0.15.23"
+	},
+	"peerDependencies": {
+		"grunt": ">=0.4.0"
+	}
+}
