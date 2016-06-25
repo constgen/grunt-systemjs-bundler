@@ -1,7 +1,8 @@
 {
 	"name": "grunt-systemjs-bundler",
-	"main": "tasks/systemjs.plugin.js",
 	"version": "0.1.2",
+	"description": "A Grunt plugin to build SystemJS modules",
+	"main": "tasks/systemjs.plugin.js",
 	"private": false,
 	"license": "MIT",
 	"keywords": [
