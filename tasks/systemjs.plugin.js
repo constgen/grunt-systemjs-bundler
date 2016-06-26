@@ -32,12 +32,17 @@ module.exports = function (grunt) {
 
 		//Fix paths in config. They  become relative to builder root
 		if (builder.loader.paths){
-			Object.keys(builder.loader.paths).forEach(function(pathAlias) {
-				var absolutePath = path.resolve(options.baseURL, builder.loader.paths[pathAlias]);
-				var relativeUrl = './' + path.relative('./', absolutePath).replace(/\\/g, '/');
-				builder.loader.paths[pathAlias] = relativeUrl;
-				builder.loader.pluginLoader.paths[pathAlias] = relativeUrl;
-			});
+			Object
+				.keys(builder.loader.paths)
+				.filter(function(pathAlias) {
+					return builder.loader.paths[pathAlias].charAt(0) === '.'
+				})
+				.forEach(function(pathAlias) {
+					var absolutePath = path.resolve(options.baseURL, builder.loader.paths[pathAlias]);
+					var relativeUrl = './' + path.relative('./', absolutePath).replace(/\\/g, '/');
+					builder.loader.paths[pathAlias] = relativeUrl;
+					builder.loader.pluginLoader.paths[pathAlias] = relativeUrl;
+				});
 		}
 
 		//Fix packages in config. They  become relative to builder root
