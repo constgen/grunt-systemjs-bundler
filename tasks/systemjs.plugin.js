@@ -26,47 +26,24 @@ module.exports = function (grunt) {
 		//grunt.log.writeln(path.relative(options.baseURL, taskConfig.src));
 
 		var builder = new Builder(
-			String(options.baseURL),
-			options.config
+			String(options.baseURL)
 		);
 
-		//Fix paths in config. They  become relative to builder root
-		if (builder.loader.paths){
-			Object
-				.keys(builder.loader.paths)
-				.filter(function(pathAlias) {
-					return builder.loader.paths[pathAlias].charAt(0) === '.'
-				})
-				.forEach(function(pathAlias) {
-					var absolutePath = path.resolve(options.baseURL, builder.loader.paths[pathAlias]);
-					var relativeUrl = './' + path.relative('./', absolutePath).replace(/\\/g, '/');
-					builder.loader.paths[pathAlias] = relativeUrl;
-					builder.loader.pluginLoader.paths[pathAlias] = relativeUrl;
+		
+
+		function configure(config) {
+			if (config instanceof Array) {
+				var configurationResult = Promise.resolve();
+				config.forEach(function(conf) {
+					configurationResult = configurationResult.then(function() {
+						return configure(conf);
+					});
 				});
-		}
-
-		//Fix packages in config. They  become relative to builder root
-		//if (builder.loader.packages) {
-		//	Object.keys(builder.loader.packages).forEach(function(pathAlias) {
-		//		var absolutePath = pathAlias.replace(/^file:(\/)+/, '');
-		//		var relativeUrl = './' + path.relative('./', absolutePath).replace(/\\/g, '/');
-		//		absolutePath = path.resolve(options.baseURL, relativeUrl);
-		//		var absoluteUrl = 'file:///' + absolutePath.replace(/\\/g, '/');
-		//		//relativeUrl = './' + path.relative('./', absolutePath).replace(/\\/g, '/');
-		//		builder.loader.packages[absoluteUrl] = builder.loader.packages[pathAlias];
-		//		delete builder.loader.packages[pathAlias];
-		//	});
-		//}
-
-
-		//resolve src. Make path relative to baseURL because of strange behaviour of System Builder
-		if (taskConfig.src instanceof Array) {
-			taskConfig.src = taskConfig.src.map(function (src) {
-				return path.relative(options.baseURL, src).replace(/\\/g, '/'); 
-			}).join(' + ');
-		}
-		else {
-			taskConfig.src = path.relative(options.baseURL, taskConfig.src).replace(/\\/g, '/');
+				return configurationResult;
+			}
+			else if (config) {
+				return builder.loadConfig(config);
+			}
 		}
 		
 		function build(params) {
@@ -80,12 +57,50 @@ module.exports = function (grunt) {
 		}
 
 		Promise.resolve()
-			//.then(function () {
-			//	if (options.config) {
-			//		return builder.loadConfig(options.config);
-			//	}
-			//})
 			.then(function () {
+				return configure(options.config);
+			})
+			.then(function() {
+				//Fix paths in config. They  become relative to builder root
+				if (builder.loader.paths) {
+					Object
+						.keys(builder.loader.paths)
+						.filter(function(pathAlias) {
+							return builder.loader.paths[pathAlias].charAt(0) === '.'
+						})
+						.forEach(function(pathAlias) {
+							var absolutePath = path.resolve(options.baseURL, builder.loader.paths[pathAlias]);
+							var relativeUrl = './' + path.relative('./', absolutePath).replace(/\\/g, '/');
+							builder.loader.paths[pathAlias] = relativeUrl;
+							builder.loader.pluginLoader.paths[pathAlias] = relativeUrl;
+						});
+				}
+
+				//Fix packages in config. They  become relative to builder root
+				//if (builder.loader.packages) {
+				//	Object.keys(builder.loader.packages).forEach(function(pathAlias) {
+				//		var absolutePath = pathAlias.replace(/^file:(\/)+/, '');
+				//		var relativeUrl = './' + path.relative('./', absolutePath).replace(/\\/g, '/');
+				//		absolutePath = path.resolve(options.baseURL, relativeUrl);
+				//		var absoluteUrl = 'file:///' + absolutePath.replace(/\\/g, '/');
+				//		//relativeUrl = './' + path.relative('./', absolutePath).replace(/\\/g, '/');
+				//		builder.loader.packages[absoluteUrl] = builder.loader.packages[pathAlias];
+				//		delete builder.loader.packages[pathAlias];
+				//	});
+				//}
+
+
+				//resolve src. Make path relative to baseURL because of strange behaviour of System Builder
+				if (taskConfig.src instanceof Array) {
+					taskConfig.src = taskConfig.src.map(function(src) {
+						return path.relative(options.baseURL, src).replace(/\\/g, '/');
+					}).join(' + ');
+				}
+				else {
+					taskConfig.src = path.relative(options.baseURL, taskConfig.src).replace(/\\/g, '/');
+				}
+			})
+			.then(function() {
 				//builder.config();
 				return build({
 					src: taskConfig.src, 
