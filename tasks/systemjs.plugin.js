@@ -92,9 +92,23 @@ module.exports = function (grunt) {
 
 				//resolve src. Make path relative to baseURL because of strange behaviour of System Builder
 				if (taskConfig.src instanceof Array) {
-					taskConfig.src = taskConfig.src.map(function(src) {
-						return path.relative(options.baseURL, src).replace(/\\/g, '/');
-					}).join(' + ');
+					taskConfig.src = taskConfig.src
+						.map(function(src) {
+							if (src.charAt(0) === '!') {
+								src = src.substr(1)
+								src = path.relative(options.baseURL, src);
+								src = src.replace(/\\/g, '/');
+								src = '!' + src;
+								return src
+							}
+							else {
+								src = path.relative(options.baseURL, src);
+								src = src.replace(/\\/g, '/');
+								return src;
+							}
+						})
+						.join(' + ')
+						.replace(/\+\s+?!/, '- ');
 				}
 				else {
 					taskConfig.src = path.relative(options.baseURL, taskConfig.src).replace(/\\/g, '/');
