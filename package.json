@@ -1,6 +1,6 @@
 {
 	"name": "grunt-systemjs-bundler",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "A Grunt plugin to build SystemJS modules",
 	"main": "tasks/systemjs.plugin.js",
 	"private": false,

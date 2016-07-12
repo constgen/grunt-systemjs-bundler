@@ -108,7 +108,7 @@ module.exports = function (grunt) {
 							}
 						})
 						.join(' + ')
-						.replace(/\+\s+?!/, '- ');
+						.replace(/\+\s+?!/g, '- ');
 				}
 				else {
 					taskConfig.src = path.relative(options.baseURL, taskConfig.src).replace(/\\/g, '/');
