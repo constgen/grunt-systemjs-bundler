@@ -24,7 +24,7 @@ Full usage example:
                     dest: BUILD_DIR + '/js/bundle.js',
                     options: {
                         baseURL: SRC_DIR,
-                        type: 'bundle', //sfx, bundle
+                        type: 'bundle', //build, bundle
                         format: 'amd',
                         config: 'system.config.js',
                         minify: false,
@@ -37,7 +37,7 @@ Full usage example:
                     dest: TEST_DIR + '/test.js',
                     options: {
                         baseURL: TEST_DIR,
-                        type: 'sfx', //sfx, bundle
+                        type: 'build', //build, bundle
                         format: 'global',
                         config: ['system.config.js', TEST_DIR + '/system.config.js']
                     }

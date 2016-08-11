@@ -1,6 +1,6 @@
 {
 	"name": "grunt-systemjs-bundler",
-	"version": "0.3.1",
+	"version": "0.4.0",
 	"description": "A Grunt plugin to build SystemJS modules",
 	"main": "tasks/systemjs.plugin.js",
 	"private": false,
@@ -21,7 +21,7 @@
 		"url": "git://github.com/constgen/grunt-systemjs-bundler"
 	},
 	"dependencies": {
-		"systemjs-builder": "0.15.23"
+		"systemjs-builder": "0.15.26"
 	},
 	"peerDependencies": {
 		"grunt": ">=0.4.0"
