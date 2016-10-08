@@ -71,6 +71,46 @@ module.exports = function (grunt) {
 						})
 				}
 
+				//Fix maps in config. They  become relative to a builder root
+				if (builder.loader.map) {
+					Object
+						.keys(builder.loader.map)
+						.filter(function(pathAlias) {
+							return builder.loader.map[pathAlias].charAt(0) === '.'
+						})
+						.forEach(function(pathAlias) {
+							var absolutePath = path.resolve(options.baseURL, builder.loader.map[pathAlias])
+							var relativeUrl = './' + path.relative('./', absolutePath).replace(/\\/g, '/')
+							builder.loader.map[pathAlias] = relativeUrl
+							builder.loader.pluginLoader.map[pathAlias] = relativeUrl
+						})
+				}
+
+				//Fix packages URLs. They  become relative to a builder root
+				if (builder.loader.packages) {
+					Object
+						.keys(builder.loader.packages)
+						.map(function(absoluteUrl) {
+							var absolutePath =  absoluteUrl.replace(/^file:\/{1,3}/, '')
+							absolutePath = path.normalize(absolutePath)
+							return {
+								path: absolutePath,
+								url: absoluteUrl
+							}
+						})
+						.forEach(function(config) {
+							var absolutePath = config.path
+							var absoluteUrl = config.url
+							var relativePath = path.relative( process.cwd(), absolutePath)
+							var correctAbsolutePath = path.resolve(options.baseURL, relativePath)
+							var correctAbsoluteUrl = 'file:///' + correctAbsolutePath.replace(/\\/g, '/')
+							builder.loader.packages[correctAbsoluteUrl] = builder.loader.packages[absoluteUrl]
+							delete builder.loader.packages[absoluteUrl]
+							builder.loader.pluginLoader.packages[correctAbsoluteUrl] = builder.loader.pluginLoader.packages[absoluteUrl]
+							delete builder.loader.pluginLoader.packages[absoluteUrl]
+						})
+				}
+
 				//Fix packages in config. They  become relative to builder root
 				//if (builder.loader.packages) {
 				//	Object.keys(builder.loader.packages).forEach(function(pathAlias) {
